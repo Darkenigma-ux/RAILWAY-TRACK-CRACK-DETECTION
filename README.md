@@ -1,6 +1,6 @@
-Railway Track Fault Detection using Machine Learning
+## Railway Track Fault Detection using Machine Learning
 
-Project Overview
+# Project Overview
 
 This project implements a machine learning-based approach to detect faults and cracks in railway tracks using Decision Trees. It uses real-time sensor data, including vibration levels, strain gauges, ultrasonic readings, and geolocation data (latitude and longitude). The model predicts track faults and visualizes them on an interactive map.
 
@@ -28,7 +28,7 @@ import pandas as pd
 
 df = pd.read_csv("railway_track_fault_data_with_location.csv")
 
-# Ensure column names match expected structure
+Ensure column names match expected structure
 expected_columns = ["Vibration_Level", "Strain_Gauge", "Ultrasonic_Reading", "Crack_Severity", "Latitude", "Longitude", "Crack_Present"]
 for col in expected_columns:
     if col not in df.columns:
