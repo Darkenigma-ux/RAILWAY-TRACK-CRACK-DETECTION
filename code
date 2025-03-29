@@ -1,0 +1,123 @@
+import pandas as pd
+import folium
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.tree import plot_tree
+from sklearn.metrics import confusion_matrix
+from folium.plugins import HeatMap
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score, classification_report
+
+# Load the dataset
+df = pd.read_csv("railway_track_fault_data_with_location.csv")
+
+# Ensure column names match exactly
+expected_columns = ["Vibration_Level", "Strain_Gauge", "Ultrasonic_Reading", "Crack_Severity", "Latitude", "Longitude",
+                    "Crack_Present"]
+for col in expected_columns:
+    if col not in df.columns:
+        print(f"⚠️ Column '{col}' not found in dataset! Check your CSV file.")
+        exit()
+
+
+# Select features (including location details)
+X = df[["Vibration_Level", "Strain_Gauge", "Ultrasonic_Reading", "Crack_Severity", "Latitude", "Longitude"]].copy()
+y = df["Crack_Present"].copy()  # Target variable
+
+# Split into training (80%) and testing (20%) sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+
+# Train the Decision Tree Model
+model = DecisionTreeClassifier(max_depth=5, random_state=42)
+model.fit(X_train, y_train)
+
+# Predict on test set
+yp = model.predict(X_test)
+
+# Evaluate performance
+accuracy = accuracy_score(y_test, yp)
+print(f"Model Accuracy: {accuracy * 100:.2f}%")
+
+# Classification Report
+print("\nClassification Report:\n", classification_report(y_test, yp))
+# Predict fault locations
+df_test = X_test.copy()
+df_test["Predicted_Fault"] = yp
+df_test["Actual_Fault"] = y_test.values
+
+# Predict on the test set
+yp = model.predict(X_test)
+
+# Compute the Confusion Matrix
+conf_matrix = confusion_matrix(y_test, yp)
+
+# Print the Confusion Matrix
+print("\n🔍 Confusion Matrix:\n", conf_matrix)
+
+# Display only locations where fault is detected
+fault_locations = df_test[df_test["Predicted_Fault"] == 1][["Latitude", "Longitude"]]
+print("\nPredicted Fault Locations:\n", fault_locations)
+
+
+
+# Create a base map (centered at the average GPS location)
+map_center = [df["Latitude"].mean(), df["Longitude"].mean()]
+railway_map = folium.Map(location=map_center, zoom_start=12)
+
+# Plot detected faults
+for index, row in fault_locations.iterrows():
+    folium.Marker(
+        location=[row["Latitude"], row["Longitude"]],
+        popup=f"Fault Detected at ({row['Latitude']}, {row['Longitude']})",
+        icon=folium.Icon(color="red", icon="exclamation-triangle", prefix="fa"),
+    ).add_to(railway_map)
+
+# Save and display the map
+railway_map.save("fault_detection_map.html")
+print("Map saved as fault_detection_map.html.")
+
+# Filter only faulty track locations
+fault_data = df[df["Crack_Present"] == 1][["Latitude", "Longitude"]]
+
+# Create base map centered at average location
+map_center = [df["Latitude"].mean(), df["Longitude"].mean()]
+railway_map = folium.Map(location=map_center, zoom_start=12)
+
+# Add HeatMap layer
+HeatMap(fault_data.values, radius=10, blur=15, max_zoom=1).add_to(railway_map)
+
+# Save and display the map
+railway_map.save("fault_heatmap.html")
+print("Heatmap saved as fault_heatmap.html.")
+
+# Plot Decision Tree
+plt.figure(figsize=(15, 8))
+plot_tree(model, feature_names=X.columns, class_names=["No Fault", "Fault"], filled=True, rounded=True)
+plt.title("Decision Tree Visualization")
+plt.show()
+
+# Plot Confusion Matrix
+plt.figure(figsize=(6, 4))
+sns.heatmap(conf_matrix, annot=True, fmt="d", cmap="Blues", xticklabels=["No Fault", "Fault"], yticklabels=["No Fault", "Fault"])
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.title("Confusion Matrix Heatmap")
+plt.show()
+
+# Plot Accuracy
+plt.figure(figsize=(5, 4))
+plt.bar(["Model Accuracy"], [accuracy * 100], color="green")
+plt.ylim(0, 100)
+plt.ylabel("Accuracy (%)")
+plt.title("Model Accuracy")
+plt.show()
+
+
+
+
+
+
+
+
+
