@@ -17,15 +17,15 @@ expected_columns = ["Vibration_Level", "Strain_Gauge", "Ultrasonic_Reading", "Cr
                     "Crack_Present"]
 for col in expected_columns:
     if col not in df.columns:
-        print(f"⚠️ Column '{col}' not found in dataset! Check your CSV file.")
+        print(f" Column '{col}' not found in dataset! Check your CSV file.")
         exit()
 
 
-# Select features (including location details)
+# featuresand location details
 X = df[["Vibration_Level", "Strain_Gauge", "Ultrasonic_Reading", "Crack_Severity", "Latitude", "Longitude"]].copy()
 y = df["Crack_Present"].copy()  # Target variable
 
-# Split into training (80%) and testing (20%) sets
+# Split into training (80%) and testing (20%) 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
 # Train the Decision Tree Model
@@ -53,7 +53,7 @@ yp = model.predict(X_test)
 conf_matrix = confusion_matrix(y_test, yp)
 
 # Print the Confusion Matrix
-print("\n🔍 Confusion Matrix:\n", conf_matrix)
+print("\n Confusion Matrix:\n", conf_matrix)
 
 # Display only locations where fault is detected
 fault_locations = df_test[df_test["Predicted_Fault"] == 1][["Latitude", "Longitude"]]
