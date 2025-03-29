@@ -1,12 +1,12 @@
-## Railway Track Fault Detection using Machine Learning
+# Railway Track Fault Detection using Machine Learning
 
-# Project Overview
+## Project Overview
 
 This project implements a machine learning-based approach to detect faults and cracks in railway tracks using Decision Trees. It uses real-time sensor data, including vibration levels, strain gauges, ultrasonic readings, and geolocation data (latitude and longitude). The model predicts track faults and visualizes them on an interactive map.
 
-Dataset Information
+## Dataset Information
 
-The dataset consists of 20,000 samples with the following features:
+### The dataset consists of 20,000 samples with the following features:
 
 Vibration_Level: Measures track vibration.
 
@@ -20,15 +20,15 @@ Latitude & Longitude: Geolocation of track sections.
 
 Crack_Present: Indicates if a crack is present (1) or not (0).
 
-Implementation Steps
+## Implementation Steps
 
-1. Load and Validate Dataset
+### 1. Load and Validate Dataset
 
 import pandas as pd
 
 df = pd.read_csv("railway_track_fault_data_with_location.csv")
 
-Ensure column names match expected structure
+### Ensure column names match expected structure
 expected_columns = ["Vibration_Level", "Strain_Gauge", "Ultrasonic_Reading", "Crack_Severity", "Latitude", "Longitude", "Crack_Present"]
 for col in expected_columns:
     if col not in df.columns:
@@ -41,7 +41,7 @@ Reads the dataset using pandas.read_csv().
 
 Checks if all required columns exist. If not, it exits with an error message.
 
-2. Define Features and Target Variable
+### 2. Define Features and Target Variable
 
 X = df[["Vibration_Level", "Strain_Gauge", "Ultrasonic_Reading", "Crack_Severity", "Latitude", "Longitude"]].copy()
 y = df["Crack_Present"].copy()
@@ -52,7 +52,7 @@ X (features) includes sensor data and location.
 
 y (target) represents whether a crack is present (1) or not (0).
 
-3. Split Dataset into Training and Testing Sets
+### 3. Split Dataset into Training and Testing Sets
 
 from sklearn.model_selection import train_test_split
 
@@ -64,7 +64,7 @@ Splits 80% of data for training and 20% for testing.
 
 Uses stratify=y to maintain the proportion of faulty vs. non-faulty tracks.
 
-4. Train the Decision Tree Model
+### 4. Train the Decision Tree Model
 
 from sklearn.tree import DecisionTreeClassifier
 
@@ -77,7 +77,7 @@ Uses DecisionTreeClassifier with a depth of 5.
 
 Trains the model using model.fit().
 
-5. Make Predictions
+### 5. Make Predictions
 
 y_pred = model.predict(X_test)
 
@@ -85,7 +85,7 @@ Explanation:
 
 Predicts faults on test data.
 
-6. Evaluate Model Performance
+### 6. Evaluate Model Performance
 
 from sklearn.metrics import accuracy_score, classification_report
 
@@ -97,9 +97,9 @@ Explanation:
 
 Calculates accuracy.
 
-Generates a classification report with Precision, Recall, and F1-score.
+## Generates a classification report with Precision, Recall, and F1-score.
 
-7. Compute Confusion Matrix
+### 7. Compute Confusion Matrix
 
 from sklearn.metrics import confusion_matrix
 import seaborn as sns
@@ -118,7 +118,7 @@ Computes confusion matrix to analyze false positives and negatives.
 
 Uses seaborn to plot a heatmap.
 
-8. Visualize Decision Tree
+### 8. Visualize Decision Tree
 
 from sklearn.tree import plot_tree
 
@@ -130,7 +130,7 @@ Explanation:
 
 Displays the trained decision tree structure.
 
-9. Fault Detection Map
+### 9. Fault Detection Map
 
 import folium
 from folium.plugins import HeatMap
@@ -148,21 +148,21 @@ Uses folium to create an interactive railway fault map.
 
 Highlights faulty locations using a HeatMap.
 
-Results
+## Results
 
-Accuracy: The model achieved approximately X% accuracy (update with actual results).
+### Accuracy: The model achieved approximately 79 % accuracy (update with actual results).
 
-Confusion Matrix: Shows correct and incorrect predictions.
+### Confusion Matrix: Shows correct and incorrect predictions.
 
-Decision Tree Visualization: Helps understand the model’s decision-making.
+### Decision Tree Visualization: Helps understand the model’s decision-making.
 
 Heatmap: Displays geolocations of detected faults.
 
-Conclusion
+## Conclusion
 
 This project provides an automated fault detection system for railway tracks. It helps railway authorities identify and fix cracks early, reducing derailment risks and improving passenger safety.
 
-Future Enhancements
+## Future Enhancements
 
 Integrate real-time data collection from IoT sensors.
 
